@@ -1,39 +1,30 @@
 function add(x, y) {
-	let total = x;
-	total += y;
-	return total;
+    return x + y;
 }
 
 function subtract(x, y) {
-	let difference = x;
-	difference -= y;
-	return difference;
+	return x - y;
 }
 
 function multiply(x, y) {
-	let product = x;
-	product *= y;
-	return product;
+	return x * y;
 }
 
 function divide(x, y) {
-    let quotient = x;
-    quotient /= y;
-    return quotient;
+    return x / y;
 }
 
 function operate(symbol, x, y) {
-    if (symbol === '+') {
-        return add(x, y);
-    }
-    else if (symbol === '-') {
-        return subtract(x, y);
-    }
-    else if (symbol === '*') {
-        return multiply(x, y);
-    }
-    else if (symbol === '/' || symbol === '÷') {
-        return divide(x, y);
+    switch (symbol) {
+        case '+':
+            return add(x,y);
+        case '-':
+            return subtract(x,y);
+        case "*":
+            return multiply(x,y);
+        case "/":
+        case "÷":
+            return divide(x,y);
     }
 }
 
@@ -45,29 +36,24 @@ function initialize() {
     let secondNum = null;
     let operator = null;
 
-    function recordNumClick(e) {
-        let pressedNum = e.target.textContent;
+    function recordNumClick(num) {
         if (displayText === '0') {
-            displayText = pressedNum;
+            displayText = num;
         }
         else {
-            displayText = displayText + pressedNum;
+            displayText = displayText + num;
         }
         updateDisplay(displayText);
     }
-    
-    function recordNumKey(e) {
-        let keyedNum = e.key;
-        if (keyedNum === "." && displayText.includes(".")) {
-            return;
-        }
-        if (displayText === '0') {
-            displayText = keyedNum;
-        }
-        else {
-            displayText = displayText + keyedNum;
-        }
-        updateDisplay(displayText);
+
+    function numClick(e) {
+        let num = e.target.textContent;
+        recordNumClick(num);
+    }
+
+    function numKey(e) {
+        let num = e.key;
+        recordNumClick(num);
     }
     
     function disableDecimal(e) {
@@ -85,35 +71,38 @@ function initialize() {
         displayButton.textContent = result;
     }
     
-    function recordOperator(e) {
+    function recordOperator(op) {
         enableDecimal();
         if (firstNum === null) {
             if (displayText.length > 0) {
                 firstNum = parseFloat(displayText);
-            }
-            else return;
+            } else { return; }
         }
         else {
             if (displayText.length > 0) {
                 secondNum = parseFloat(displayText);
                 evaluateResult();
-            }
-            else {
+            } else {
                 secondNum = firstNum;
                 evaluateResult();
             }
         }
-        if (e.target) {
-            operator = e.target.value;
-        }
-        if (e.key) {
-            operator = e.key;
-        }
+        operator = op;
         displayText = '';
         if (operator === "=" || operator === "Enter") {
             firstNum = null;
             secondNum = null;
         }
+    }
+
+    function operatorClick(e) {
+        let op = e.target.value;
+        recordOperator(op);
+    }
+
+    function operatorKey(e) {
+        let op = e.key;
+        recordOperator(op);
     }
     
     function evaluateResult() {
@@ -159,10 +148,12 @@ function initialize() {
 
     function checkKey(e) {
         const keyCode = e.keyCode;
-        console.log(keyCode);
         if (e.shiftKey === true) {
             if (keyCode === 56 || keyCode === 187) {
-                recordOperator(e);
+                operatorKey(e);
+            }
+            if (keyCode === 53) {
+                percentage();
             }
             if (keyCode === 53) {
                 percentage();
@@ -176,26 +167,26 @@ function initialize() {
                 clear();
             }
             if (keyCode >= 48 && keyCode <= 57) {
-                recordNumKey(e);
+                numKey(e);
             }
             if (keyCode === 190) {
                 disableDecimal();
-                recordNumKey(e);
+                numKey(e);
             }
             if (keyCode === 189 || keyCode === 13 | keyCode === 191) {
-                recordOperator(e);
+                operatorKey(e);
             }
         }
     }
 
     document.querySelectorAll('.digit').forEach(digit => {
-        digit.addEventListener("click", recordNumClick);
+        digit.addEventListener("click", numClick);
     });
 
     decimalButton.addEventListener("click", disableDecimal);
 
     document.querySelectorAll('.operator').forEach(button => {
-        button.addEventListener("click", recordOperator);
+        button.addEventListener("click", operatorClick);
     });
 
     document.querySelector('#clear').addEventListener("click", clear);
@@ -210,4 +201,3 @@ function initialize() {
 }
 
 initialize();
-

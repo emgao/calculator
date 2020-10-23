@@ -135,6 +135,18 @@ function initialize() {
             updateDisplay(displayText);
         }
     }
+
+    function percentage() {
+        if (!displayText) return;
+        displayText = divide(displayText,100).toString();
+        updateDisplay(displayText);
+    }
+
+    function negative() {
+        if (!displayText) return;
+        displayText = (displayText - (displayText * 2)).toString();
+        updateDisplay(displayText);
+    }
     
     function clear() {
         displayText = '';
@@ -149,8 +161,11 @@ function initialize() {
         const keyCode = e.keyCode;
         console.log(keyCode);
         if (e.shiftKey === true) {
-            if (keyCode === 56 || keyCode === 53 || keyCode === 187) {
+            if (keyCode === 56 || keyCode === 187) {
                 recordOperator(e);
+            }
+            if (keyCode === 53) {
+                percentage();
             }
         }
         else if (e.shiftKey === false) {
@@ -185,17 +200,9 @@ function initialize() {
 
     document.querySelector('#clear').addEventListener("click", clear);
 
-    document.querySelector('#plus-minus').addEventListener("click", function() {
-        if (!displayText) return;
-        displayText = (displayText - (displayText * 2)).toString();
-        updateDisplay(displayText);
-    });
+    document.querySelector('#plus-minus').addEventListener("click", negative);
 
-    document.querySelector('#percent').addEventListener("click", function() {
-        if (!displayText) return;
-        displayText = divide(displayText,100).toString();
-        updateDisplay(displayText);
-    });
+    document.querySelector('#percent').addEventListener("click", percentage);
 
     document.querySelector('#backspace').addEventListener("click", backspace);
 
